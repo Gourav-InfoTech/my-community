@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../styles/globals.css";
+import ProjectContext from "@/context/ProjectContext";
+import Appbar from "@/components/Appbar";
+import Sidebar from "@/components/Sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +19,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <ProjectContext>
+          <Appbar />
+          <div className="h-[calc(100vh_-_var(--appbar-height))] max-w-screen flex">
+            <Sidebar />
+            {children}
+          </div>
+        </ProjectContext>
+      </body>
     </html>
   );
 }
