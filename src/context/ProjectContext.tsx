@@ -70,12 +70,12 @@ export default function ProjectContext({ children }: { children: React.ReactNode
     if (channels?.length > 0) {
       if (!channel) {
         setActiveChannel(channels[0]);
-        router.push(`/c/${channels[0]?._id}`);
+        router.push(`/c/${channels[0]?.provider_channel_id}`);
       }
     }
 
     if (pathname.includes("c/")) {
-      const channel = channels.find((channel) => pathname.includes(channel?._id));
+      const channel = channels.find((channel) => pathname.includes(channel?.provider_channel_id));
       setActiveChannel(channel || null);
     }
   }, [activeChannel, channels, pathname, router, fetchingChannels, channel]);

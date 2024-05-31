@@ -25,7 +25,7 @@ export async function getProjectChannelApi({ domain }: { domain: string }) {
     });
 }
 
-export async function getChannelMessageApi(raw: { domain: string; channel_id: string, message_id?: string, page: string, limit: string }) {
+export async function getChannelMessageApi(raw: { domain: string; provider_channel_id: string, provider_message_id?: string, page: string, limit: string }) {
     return post({
         route: "/api/v1/getChannelMessage",
         data: JSON.stringify(raw),
