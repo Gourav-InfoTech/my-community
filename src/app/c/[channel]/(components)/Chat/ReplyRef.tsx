@@ -6,7 +6,7 @@ import React from "react";
 
 export default function ReplyRef({ message, to }: { message: MessageT; to: string }) {
   return (
-    <Link href="" className="flex items-center gap-2 text-sm mt-3">
+    <Link href={to} className="flex items-center gap-2 text-sm mt-3">
       <CornerUpRight className="opacity-40" />
       <div className="flex gap-2 items-center mb-2">
         <div>

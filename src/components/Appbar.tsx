@@ -5,9 +5,10 @@ import { ArrowRight, MoveRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import Skeleton from "./Skeleton";
 
 export default function Appbar() {
-  const { projectDetail } = useProject();
+  const { projectDetail, fetchingProject } = useProject();
 
   function getProviderIcon(type: ProvidersE) {
     switch (type) {
@@ -28,10 +29,21 @@ export default function Appbar() {
   return (
     <div className="h-appbarHeight bg-foreground-100">
       <div className="flex justify-between items-center h-full px-5 md:px-10">
-        <div className="flex gap-3 items-center">
-          {getProviderIcon(projectDetail?.type) && <Image src={getProviderIcon(projectDetail?.type) || ""} alt="provider" width={28} height={28} />}
-          <div className="font-semibold">{projectDetail?.name}</div>
-        </div>
+        {!fetchingProject ? (
+          <div className="flex gap-3 items-center">
+            {getProviderIcon(projectDetail?.type) && <Image src={getProviderIcon(projectDetail?.type) || ""} alt="provider" width={28} height={28} />}
+            <div className="font-semibold">{projectDetail?.name}</div>
+          </div>
+        ) : (
+          <div className="flex gap-3 items-center">
+            <Skeleton className="rounded-full">
+              <div className="h-10 aspect-square" />
+            </Skeleton>
+            <Skeleton className="rounded-full">
+              <div className="h-10 w-56" />
+            </Skeleton>
+          </div>
+        )}
         {projectDetail?.invite_url && (
           <div>
             <Link href={projectDetail?.invite_url} target="_blank" className="flex gap-2 px-4 py-2 text-foreground/90 rounded-md group bg-foreground-200 hover:bg-foreground-300 transition-colors">

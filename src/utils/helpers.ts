@@ -1,3 +1,14 @@
+// import { getEmojiDataFromNative, init } from "emoji-mart";
+import EmojiConvertor from 'emoji-js';
+
+export const convertShortcodeToEmoji = (shortcode: string) => {
+    const emoji = new EmojiConvertor();
+    emoji.replace_mode = 'unified'; // To get the unicode emoji
+    emoji.allow_native = true; // To use native unicode emoji
+    return emoji.replace_colons(shortcode);
+};
+
+
 export function humanizeTimestamp(timestamp: number | string | Date): string {
     const now = Date.now();
     const inputTime = typeof timestamp === "number" ? timestamp : typeof timestamp === "string" ? new Date(timestamp).getTime() : timestamp instanceof Date ? timestamp.getTime() : NaN;
@@ -35,3 +46,4 @@ export function humanizeTimestamp(timestamp: number | string | Date): string {
         return `${years} year${years !== 1 ? "s" : ""} ago`;
     }
 }
+

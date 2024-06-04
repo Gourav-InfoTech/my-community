@@ -5,16 +5,23 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import TextItem from "./TextItem";
 import MediaItem from "./MediaItem";
-import { getEmojiDataFromNative } from "emoji-mart";
 import ReplyRef from "./ReplyRef";
-
+import EmojiConvertor from "emoji-js";
 export default function Item({ message }: { message: MessageT }) {
-  // useEffect(() => {
-  //   const arr = message?.reactions?.map((rxn) => {
-  //     return emoji.get(rxn?.reaction_type);
-  //   });
-  //   console.log(arr);
-  // }, [message]);
+  const [convertedReactions, setConvertedReactions] = useState([] as { emoji: string; count: number }[]);
+
+  useEffect(() => {
+    if (!message?.reactions || message?.reactions?.length === 0) return;
+    const emoji = new EmojiConvertor();
+    emoji.replace_mode = "unified";
+    emoji.allow_native = true;
+
+    const convertShortcodeToEmoji = (shortcode: string) => emoji.replace_colons(shortcode);
+
+    const newReactionsArray = message?.reactions?.map((item) => ({ emoji: convertShortcodeToEmoji(item.reaction_type), count: item?.count }));
+
+    setConvertedReactions(newReactionsArray || []);
+  }, [message?.reactions]);
 
   return (
     <div id={message?._id} key={message?._id} className="my-6">
@@ -23,8 +30,8 @@ export default function Item({ message }: { message: MessageT }) {
           <Image width={28} height={28} src={message?.user?.profile_pic_url} alt="profile" className="rounded-full" />
         </div>
         <div className="">
-          {message?.reference && <ReplyRef to={message?._id} message={message?.reference} />}
-          <div style={{ background: "linear-gradient(190deg, #202020 0%, #141414 61%)" }} className="break-all p-5 bg-foreground-200 flex flex-col gap-2 rounded-xl rounded-bl-none text-sm">
+          {message?.reference && <ReplyRef to={"#" + message?.reference?._id} message={message?.reference} />}
+          <div style={{ background: "linear-gradient(190deg, #202020 0%, #141414 61%)" }} className="break-all py-3 px-4 bg-foreground-200 flex flex-col gap-2 rounded-xl rounded-bl-none text-sm">
             {message?.message && <TextItem message={message?.message} />}
             {message?.attachments?.length > 0 && (
               <div className="flex gap-2 flex-wrap">
@@ -57,18 +64,18 @@ export default function Item({ message }: { message: MessageT }) {
         </div>
       )}
 
-      {/* {message?.reactions?.length > 0 && (
+      {convertedReactions?.length > 0 && (
         <div className="flex gap-2 mt-2">
-          {message?.reactions?.map((rxn) => {
+          {convertedReactions?.map((rxn, indx) => {
             return (
-              <div key={rxn?._id} className="flex gap-1 items-center">
-                <div>{emoji.get(rxn?.reaction_type)}</div>
+              <div key={indx} className="flex gap-1 items-center">
+                <div>{rxn?.emoji}</div>
                 <div className="text-xs opacity-40">{rxn?.count}</div>
               </div>
             );
           })}
         </div>
-      )} */}
+      )}
     </div>
   );
 }

@@ -12,6 +12,7 @@ type ProjectContextType = {
   projectDetail: ProjectDetailT;
   fetchingChannels: boolean;
   domain: string;
+  fetchingProject: boolean;
 };
 
 const ProjectCtx = React.createContext({} as ProjectContextType);
@@ -22,12 +23,16 @@ export default function ProjectContext({ children }: { children: React.ReactNode
   const [activeChannel, setActiveChannel] = useState<ChannelT | null>(null);
   const [projectDetail, setProjectDetail] = useState<ProjectDetailT>({} as ProjectDetailT);
   const [fetchingChannels, setFetchingChannels] = useState(true);
+  const [fetchingProject, setFetchingProject] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
   const { channel } = useParams();
 
   useEffect(() => {
-    if (!domain) return;
+    if (!domain) {
+      setFetchingProject(false);
+      return;
+    }
     async function fetchProject() {
       try {
         const res = await getProjectDetailApi({ domain });
@@ -36,18 +41,23 @@ export default function ProjectContext({ children }: { children: React.ReactNode
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        setFetchingProject(false);
       }
     }
     fetchProject();
   }, [domain]);
 
   useEffect(() => {
-    if (!domain) return;
+    if (!domain) {
+      setFetchingChannels(false);
+      return;
+    }
     async function fetchChannels() {
       try {
         const res = await getProjectChannelApi({ domain });
         if (res.type === ApiResE.SUCCESS) {
-          setChannels(res.data || {});
+          setChannels(res.data || []);
         }
       } catch (error) {
         console.error(error);
@@ -89,6 +99,7 @@ export default function ProjectContext({ children }: { children: React.ReactNode
         setActiveChannel,
         projectDetail,
         fetchingChannels,
+        fetchingProject,
       }}
     >
       {children}
